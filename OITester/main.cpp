@@ -6,94 +6,105 @@
 #include <QFile>
 #include <QTextStream>
 
+const double PRECISION = 0.15;
+const int ELEMENT_OF_FACES_COUNT = 20;
+const std::string ELEMENT_OF_FACES[ELEMENT_OF_FACES_COUNT] {
+    "RIGHT_EYE_PUPIL_ERROR",
+    "LEFT_EYE_PUPIL_ERROR",
+    "RIGHT_MOUTH_ERROR",
+    "LEFT_MOUTH_ERROR",
+    "RIGHT_OUTER_EYEBROW_ERROR",
+    "RIGHT_INNER_EYEBROW_ERROR",
+    "LEFT_INNER_EYEBROW_ERROR",
+    "LEFT_OUTER_EYEBROW_ERROR",
+    "RIGHT_TEMPLE_ERROR",
+    "RIGHT_OUTER_EYE_ERROR",
+    "RIGHT_INNER_EYE_ERROR",
+    "LEFT_INNER_EYE_ERROR",
+    "LEFT_OUTER_EYE_ERROR",
+    "LEFT_TEMPLE_ERROR",
+    "TIP_OF_NOSE",
+    "RIGHT_NOSTRIL_ERROR",
+    "LEFT_NOSTRIL_ERROR",
+    "CENTRE_POINT_OF_UPPER_LIP_ERROR",
+    "CENTRE_POINT_OF_LOWER_LIP_ERROR",
+    "TIP_OF_CHIN_ERROR" };
+
+double **createTwoDimensionalTable(int firstDimension, int secondDimension);
+double ***createTriDimensionalTable(int firstDimension, int secondDimension, int thirdDimension);
+QTextStream *openFile(QString path, QString fileName);
+void skipLines(QTextStream &stream, int n);
+void readCoordinatesFromLine(QString line, double *saveIn);
+double euclideanDistance(double *pointA, double *pointB);
+
 int main(int argc, char *argv[])
 {
-    bool basic = true;
+    bool basic = false;
     QString testAnnotationsPath;
     QString resultAnnotationsPath;
-    QString filesNames;
-    int numberOfFiles;
 
-    if (argc == 6) {
-        if (argv[1] == "1")
-            basic = false;
+    if (argc == 4) {
+        if (std::atoi(argv[1]) == 0)
+            basic = true;
         testAnnotationsPath = argv[2];
         resultAnnotationsPath = argv[3];
-        numberOfFiles = std::atoi(argv[4]);
-        filesNames = argv[5];
+    } else {
+       std::cout << "Invalid number of arguments!\n";
+       return 1;
     }
-    QStringList namesOfFiles = filesNames.split(" ");
-    const double PRECISION = 0.15;
-    const int ELEMENT_OF_FACES_COUNT = 20;
-    std::string elementsOfFaces[ELEMENT_OF_FACES_COUNT] {
-        "RIGHT_EYE_PUPIL_ERROR",
-        "LEFT_EYE_PUPIL_ERROR",
-        "RIGHT_MOUTH_ERROR",
-        "LEFT_MOUTH_ERROR",
-        "RIGHT_OUTER_EYEBROW_ERROR",
-        "RIGHT_INNER_EYEBROW_ERROR",
-        "LEFT_INNER_EYEBROW_ERROR",
-        "LEFT_OUTER_EYEBROW_ERROR",
-        "RIGHT_TEMPLE_ERROR",
-        "RIGHT_OUTER_EYE_ERROR",
-        "RIGHT_INNER_EYE_ERROR",
-        "LEFT_INNER_EYE_ERROR",
-        "LEFT_OUTER_EYE_ERROR",
-        "LEFT_TEMPLE_ERROR",
-        "TIP_OF_NOSE",
-        "RIGHT_NOSTRIL_ERROR",
-        "LEFT_NOSTRIL_ERROR",
-        "CENTRE_POINT_OF_UPPER_LIP_ERROR",
-        "CENTRE_POINT_OF_LOWER_LIP_ERROR",
-        "TIP_OF_CHIN_ERROR" };
+
+    QDir testAnnotationsDir(testAnnotationsPath);
+    QStringList namesOfFiles = testAnnotationsDir.entryList();
+    namesOfFiles.erase(namesOfFiles.begin(), namesOfFiles.begin()+2);
+    const int NUMBER_OF_FILES = namesOfFiles.size();
 
     double mean[ELEMENT_OF_FACES_COUNT] {0};
     double squareError[ELEMENT_OF_FACES_COUNT] {0};
-    double testPoints[numberOfFiles][ELEMENT_OF_FACES_COUNT][2];
-    double resultPoints[numberOfFiles][ELEMENT_OF_FACES_COUNT][2];
-    double distances[numberOfFiles][ELEMENT_OF_FACES_COUNT];
-    bool correctLocation[numberOfFiles];
+    double ***testPoints = createTriDimensionalTable(NUMBER_OF_FILES, ELEMENT_OF_FACES_COUNT, 2);
+    double ***resultPoints = createTriDimensionalTable(NUMBER_OF_FILES, ELEMENT_OF_FACES_COUNT, 2);
+    double **distances = createTwoDimensionalTable(NUMBER_OF_FILES, ELEMENT_OF_FACES_COUNT);
+    QStringList namesOfInvalidFiles;
 
-    for (int i = 0; i < numberOfFiles; i++) {
-        QFile testAnnotationsFile(testAnnotationsPath+QDir::separator()+namesOfFiles.at(i));
+
+    for (int i = 0; i < NUMBER_OF_FILES; i++) {
+        QFile testAnnotationsFile(testAnnotationsPath + QDir::separator() + namesOfFiles.at(i));
         if(!testAnnotationsFile.open(QIODevice::ReadOnly)) {
+            std::cout << "Cant open test file: " << i << ", " << (testAnnotationsPath+QDir::separator()+namesOfFiles.at(i)).toStdString() << "\n";
+            return 2;
         }
 
-        QFile resultAnnotationsFile(resultAnnotationsPath+QDir::separator()+namesOfFiles.at(i));
+        QFile resultAnnotationsFile(resultAnnotationsPath + QDir::separator() + namesOfFiles.at(i));
         if(!resultAnnotationsFile.open(QIODevice::ReadOnly)) {
+            std::cout << "Cant open result file: " << i << ", " << (resultAnnotationsPath+QDir::separator()+namesOfFiles.at(i)).toStdString() << "\n";
+            return 2;
         }
 
         QTextStream testAnnotationsStream(&testAnnotationsFile);
         QTextStream resultAnnotationsStream(&resultAnnotationsFile);
 
-        correctLocation[i] = true;
         // skip header
-        testAnnotationsStream.readLine();
-        testAnnotationsStream.readLine();
-        testAnnotationsStream.readLine();
-        resultAnnotationsStream.readLine();
-        resultAnnotationsStream.readLine();
-        resultAnnotationsStream.readLine();
+        skipLines(testAnnotationsStream, 3);
+        skipLines(resultAnnotationsStream, 3);
+
         for (int j = 0; j < ELEMENT_OF_FACES_COUNT; j++) {
             QString testLine = testAnnotationsStream.readLine();
-            QStringList testCoordinatesString = testLine.split(" ");
             QString resultLine = resultAnnotationsStream.readLine();
-            QStringList resultCoordinatesString = resultLine.split(" ");
 
-            resultPoints[i][j][0] = resultCoordinatesString.at(0).toDouble();
-            resultPoints[i][j][1] = resultCoordinatesString.at(1).toDouble();
-
-            testPoints[i][j][0] = testCoordinatesString.at(0).toDouble();
-            testPoints[i][j][1] = testCoordinatesString.at(1).toDouble();
+            readCoordinatesFromLine(resultLine, resultPoints[i][j]);
+            readCoordinatesFromLine(testLine, testPoints[i][j]);
         }
-        double relativeDistance = std::sqrt(std::pow(testPoints[i][19][0] - testPoints[i][14][0], 2) +
-                                            std::pow(testPoints[i][19][1] - testPoints[i][14][1], 2));
+
+        double relativeDistance = euclideanDistance(testPoints[i][14], testPoints[i][19]);
+
         for (int j = 0; j < ELEMENT_OF_FACES_COUNT; j++) {
-            distances[i][j] = std::sqrt(std::pow(testPoints[i][j][0] - resultPoints[i][j][0], 2) +
-                                        std::pow(testPoints[i][j][1] - resultPoints[i][j][1], 2)) / relativeDistance;
+            if (basic && i >= 2)
+                break;
+            distances[i][j] = euclideanDistance(testPoints[i][j], resultPoints[i][j]) / relativeDistance;
+
             mean[j] += distances[i][j];
             if (distances[i][j] > PRECISION) {
-                correctLocation[i] = false;
+                if (!namesOfFiles.contains(namesOfFiles.at(i)))
+                    namesOfFiles.append(namesOfFiles.at(i));
             }
         }
 
@@ -101,29 +112,88 @@ int main(int argc, char *argv[])
         resultAnnotationsFile.close();
     }
 
-    for (int j = 0; j < ELEMENT_OF_FACES_COUNT; j++) {
-        mean[j] /= numberOfFiles;
+    // Compute mean
+    for (int i = 0; i < ELEMENT_OF_FACES_COUNT; i++) {
+        if (basic && i >= 2)
+            break;
+        mean[i] /= NUMBER_OF_FILES;
     }
-    for (int i = 0; i < numberOfFiles; i++) {
+
+    // First step of mean square error
+    for (int i = 0; i < NUMBER_OF_FILES; i++) {
         for (int j = 0; j < ELEMENT_OF_FACES_COUNT; j++) {
+            if (basic && j >= 2)
+                break;
             squareError[j] += std::pow(distances[i][j] - mean[j], 2);
         }
     }
-    for (int j = 0; j < ELEMENT_OF_FACES_COUNT; j++) {
-        squareError[j] /= numberOfFiles;
+
+    // Second step of mean square error
+    for (int i = 0; i < ELEMENT_OF_FACES_COUNT; i++) {
+        if (basic && i >= 2)
+            break;
+        squareError[i] /= NUMBER_OF_FILES;
     }
 
     std::cout << "Square mean error:\n";
-    for (int j = 0; j < ELEMENT_OF_FACES_COUNT; j++) {
-        std::cout << "\t" << j << ". " << elementsOfFaces[j] << ": " << squareError[j] << "\n";
+    for (int i = 0; i < ELEMENT_OF_FACES_COUNT; i++) {
+        if (basic && i >= 2)
+            break;
+        std::cout << "\t" << i << ". " << ELEMENT_OF_FACES[i] << ": " << squareError[i] << "\n";
     }
 
-    std::cout << "\nInvalid files:\n";
-    for (int j = 0; j < numberOfFiles; j++) {
-        if (!correctLocation[j]) {
-            std::cout << namesOfFiles.at(j).toStdString() << "\n";
+    if (namesOfInvalidFiles.size() > 0) {
+        std::cout << "\nInvalid files:\n";
+        for (int j = 0; j < namesOfInvalidFiles.size(); j++) {
+            std::cout << "\t" << namesOfInvalidFiles.at(j).toStdString() << "\n";
         }
     }
 
     return 0;
+}
+
+double **createTwoDimensionalTable(int firstDimension, int secondDimension)
+{
+    double **newTable = new double*[firstDimension];
+    for (int i = 0; i < firstDimension; i++) {
+        newTable[i] = new double[secondDimension];
+    }
+
+    return newTable;
+}
+
+double ***createTriDimensionalTable(int firstDimension, int secondDimension, int thirdDimension)
+{
+    double ***newTable = new double**[firstDimension];
+    for (int i = 0; i < firstDimension; i++) {
+        newTable[i] = new double*[secondDimension];
+        for (int j = 0; j < secondDimension; j++) {
+            newTable[i][j] = new double[thirdDimension];
+        }
+    }
+
+    return newTable;
+}
+
+void skipLines(QTextStream &stream, int n)
+{
+    for (int i = 0; i < n; i++)
+    {
+        stream.readLine();
+    }
+}
+
+
+void readCoordinatesFromLine(QString line, double *saveIn)
+{
+    QStringList testCoordinatesString = line.split(" ");
+
+    saveIn[0] = testCoordinatesString.at(0).toDouble();
+    saveIn[1] = testCoordinatesString.at(1).toDouble();
+}
+
+double euclideanDistance(double *pointA, double *pointB)
+{
+    return std::sqrt(std::pow(pointA[0] - pointB[0], 2) +
+                     std::pow(pointA[1] - pointB[1], 2));
 }
