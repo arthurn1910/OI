@@ -7,7 +7,7 @@ SigmoidFunction::SigmoidFunction() {
 }
 
 SigmoidFunction::SigmoidFunction(double beta) {
-    this->beta = 1;
+    this->beta = beta;
 }
 
 double SigmoidFunction::process(double sum) {

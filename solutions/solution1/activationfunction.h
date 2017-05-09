@@ -6,6 +6,7 @@ class ActivationFunction
 {
 public:
     ActivationFunction();
+    ~ActivationFunction();
     virtual double process(double input) = 0;
 };
 

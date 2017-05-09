@@ -7,5 +7,5 @@ ForwardFunction::ForwardFunction() : ActivationFunction()
 
 double ForwardFunction::process(double input)
 {
-    return input;
+    return 10 * input;
 }

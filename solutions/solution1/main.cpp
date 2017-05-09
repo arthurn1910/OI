@@ -6,8 +6,9 @@
 #include <cmath>
 #include <iostream>
 #include <string>
+#include <clocale>
 #include "pugixml/pugixml.hpp"
-
+#include <QCoreApplication>
 #include "neuralnetwork.h"
 
 pugi::xml_document *loadNeuralNetworkSetup(bool basic);
@@ -15,6 +16,10 @@ double *readTrainImage(QString path);
 
 int main(int argc, char *argv[])
 {
+
+    QCoreApplication a(argc, argv);
+    std::setlocale(LC_NUMERIC,"en_US.UTF-8");
+
     const int ELEMENT_OF_FACES_COUNT = 20;
     if (argc != 4) {
         qDebug() << "Invalid number of arguments";
@@ -34,11 +39,13 @@ int main(int argc, char *argv[])
     namesOfFiles.erase(namesOfFiles.begin(), namesOfFiles.begin() + 2);
 
     bool basic = false;
-    if (std::atoi(argv[1]) == 1) {
+    if (std::atoi(argv[1]) == 0) {
         basic = true;
     }
 
     pugi::xml_document *doc = loadNeuralNetworkSetup(basic);
+    if (doc == nullptr)
+        return 3;
 
     NeuralNetwork *network = new NeuralNetwork(doc);
 
@@ -49,6 +56,7 @@ int main(int argc, char *argv[])
 
         QString annotationFileName = namesOfFiles.at(i);
         annotationFileName.chop(3);
+        annotationFileName = annotationFileName.toLower();
         annotationFileName.append("pts");
 
         QFile newFile(resultPath + annotationFileName);
@@ -88,7 +96,10 @@ int main(int argc, char *argv[])
 
 pugi::xml_document *loadNeuralNetworkSetup(bool basic)
 {
-    QDir dir(QDir::current());
+    QDir dir(QCoreApplication::applicationDirPath());
+    //QDir dir("E:\\Virt\\shere\\final\\solution1\\bin");
+    //QDir dir("/media/sf_shere/final/solution1/bin");
+
     dir.cdUp();
     dir.cd("data");
 
@@ -105,6 +116,7 @@ pugi::xml_document *loadNeuralNetworkSetup(bool basic)
 
     if (!result) {
         qDebug() << "XML parsed with errors.\n\n";
+        return nullptr;
     }
 
     return setup;

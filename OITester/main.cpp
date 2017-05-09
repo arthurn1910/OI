@@ -6,7 +6,7 @@
 #include <QFile>
 #include <QTextStream>
 
-const double PRECISION = 0.15;
+const double PRECISION = 0.10;
 const int ELEMENT_OF_FACES_COUNT = 20;
 const std::string ELEMENT_OF_FACES[ELEMENT_OF_FACES_COUNT] {
     "RIGHT_EYE_PUPIL_ERROR",
@@ -64,6 +64,7 @@ int main(int argc, char *argv[])
     double ***resultPoints = createTriDimensionalTable(NUMBER_OF_FILES, ELEMENT_OF_FACES_COUNT, 2);
     double **distances = createTwoDimensionalTable(NUMBER_OF_FILES, ELEMENT_OF_FACES_COUNT);
     QStringList namesOfInvalidFiles;
+    QStringList namesOfCorrectFiles;
 
 
     for (int i = 0; i < NUMBER_OF_FILES; i++) {
@@ -94,7 +95,7 @@ int main(int argc, char *argv[])
             readCoordinatesFromLine(testLine, testPoints[i][j]);
         }
 
-        double relativeDistance = euclideanDistance(testPoints[i][14], testPoints[i][19]);
+        double relativeDistance = euclideanDistance(testPoints[i][8], testPoints[i][13]);
 
         for (int j = 0; j < ELEMENT_OF_FACES_COUNT; j++) {
             if (basic && i >= 2)
@@ -102,9 +103,12 @@ int main(int argc, char *argv[])
             distances[i][j] = euclideanDistance(testPoints[i][j], resultPoints[i][j]) / relativeDistance;
 
             mean[j] += distances[i][j];
+
             if (distances[i][j] > PRECISION) {
-                if (!namesOfFiles.contains(namesOfFiles.at(i)))
-                    namesOfFiles.append(namesOfFiles.at(i));
+                if (!namesOfInvalidFiles.contains(namesOfFiles.at(i)))
+                    namesOfInvalidFiles.append(namesOfFiles.at(i));
+            } else {
+
             }
         }
 
@@ -135,11 +139,19 @@ int main(int argc, char *argv[])
         squareError[i] /= NUMBER_OF_FILES;
     }
 
-    std::cout << "Square mean error:\n";
+    std::cout << "\nSquare mean error:\n";
     for (int i = 0; i < ELEMENT_OF_FACES_COUNT; i++) {
         if (basic && i >= 2)
             break;
         std::cout << "\t" << i << ". " << ELEMENT_OF_FACES[i] << ": " << squareError[i] << "\n";
+    }
+
+    std::cout << "\nCorrect location: " << (NUMBER_OF_FILES - namesOfInvalidFiles.size()) / (double) NUMBER_OF_FILES << " %\n\n";
+
+    std::cout << "Correct files:\n";
+    for (int j = 0; j < namesOfFiles.size(); j++) {
+        if (!namesOfInvalidFiles.contains(namesOfFiles.at(j)))
+            std::cout << "\t" << namesOfFiles.at(j).toStdString() << "\n";
     }
 
     if (namesOfInvalidFiles.size() > 0) {

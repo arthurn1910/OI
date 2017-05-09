@@ -63,7 +63,7 @@ double NeuralNetwork::train(double *input, double *desiredOutput)
     // obliczamy błąd średnio kwadratowy
     for (int i = 0; i < networkVector[2]; i++)
     {
-        qDebug() << "D: " << desiredOutput[i] << ", O: " << output[i] << ", E: " << squaredError << "\n";
+        //qDebug() << "D: " << desiredOutput[i] << ", O: " << output[i] << ", E: " << squaredError << "\n";
         squaredError += std::pow(desiredOutput[i] - output[i], 2);
     }
     // pętla przechodząca przez perceptrony w ostatniej wartswie

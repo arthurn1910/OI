@@ -5,7 +5,7 @@ ForwardFunction::ForwardFunction()
 }
 
 double ForwardFunction::activate(double sum) {
-    return sum;
+    return 10 * sum;
 }
 
 double ForwardFunction::derivativeActivate(double sum) {

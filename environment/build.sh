@@ -1,6 +1,8 @@
 #!/bin/bash
+set -e
 
-cd bin
+DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+cd $DIR/bin
 rm -f *
 qmake -makefile ../src/OITester.pro
 make

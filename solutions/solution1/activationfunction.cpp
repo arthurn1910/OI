@@ -4,3 +4,8 @@ ActivationFunction::ActivationFunction()
 {
 
 }
+
+ActivationFunction::~ActivationFunction()
+{
+
+}

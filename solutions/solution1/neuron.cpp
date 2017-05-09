@@ -41,7 +41,6 @@ double Neuron::process(double *input)
 
     for (int i = 0; i < numberOfInputs; i++) {
         output += weights[i] * input[i];
-        //qDebug() << "\t\tPart out " << weights[i] << " * " << input[i];
     }
 
     //qDebug() << "\t\tBef bias " << output;
