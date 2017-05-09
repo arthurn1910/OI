@@ -1,6 +1,7 @@
 #include "neuralnetwork.h"
 #include <iostream>
 #include <cmath>
+#include <QDebug>
 
 NeuralNetwork::NeuralNetwork(pugi::xml_document *document)
 {
@@ -31,11 +32,13 @@ double **NeuralNetwork::process(double *input)
         currentInput = layers[i]->process(currentInput);
     }
 
-    int lastLayerSizeHalved = layers[layerCount - 1]->getLayerSize() / 2;
-    double **output = new double*[lastLayerSizeHalved];
+    int lastLayerSize = layers[layerCount - 1]->getLayerSize();
+    double **output = new double*[lastLayerSize];
 
-    for (int i = 0; i < lastLayerSizeHalved; i += 2) {
-        output[i] = new double[2] { currentInput[i], currentInput[i+1] };
+    for (int i = 0; i < lastLayerSize; i += 2) {
+        output[i / 2] = new double[2];
+        output[i / 2][0] = currentInput[i];
+        output[i / 2][1] = currentInput[i+1];
     }
 
     return output;

@@ -11,6 +11,7 @@
 #include "neuralnetwork.h"
 
 pugi::xml_document *loadNeuralNetworkSetup(bool basic);
+double *readTrainImage(QString path);
 
 int main(int argc, char *argv[])
 {
@@ -42,13 +43,7 @@ int main(int argc, char *argv[])
     NeuralNetwork *network = new NeuralNetwork(doc);
 
     for (int i = 0; i < namesOfFiles.size(); i++) {
-        QImage *image = new QImage(imagesPath + namesOfFiles.at(i));
-        int pixelsInImage = image->width()*image->height();
-        double *pixels = new double[pixelsInImage];
-        uchar *bits = image->bits();
-        for (int j = 0; j < pixelsInImage; j++) {
-            pixels[j] = bits[j];
-        }
+        double *pixels = readTrainImage(imagesPath + namesOfFiles.at(i));
 
         double **coordinates = network->process(pixels);
 
@@ -80,6 +75,11 @@ int main(int argc, char *argv[])
         stream << "}" << endl;
 
         newFile.close();
+
+        for (int j = 0; j < ELEMENT_OF_FACES_COUNT; j++) {
+            delete [] coordinates[j];
+        }
+        delete coordinates;
     }
 
     return 0;
@@ -104,8 +104,37 @@ pugi::xml_document *loadNeuralNetworkSetup(bool basic)
     pugi::xml_parse_result result = setup->load_file(path.toStdString().c_str());
 
     if (!result) {
-        std::cout << "XML parsed with errors.\n\n";
+        qDebug() << "XML parsed with errors.\n\n";
     }
 
     return setup;
+}
+
+
+double *readTrainImage(QString path)
+{
+    QImage image(path);
+    int offset = image.width() / 4;
+    double *outputImages = new double[6144];
+    uchar *bits = image.bits();
+
+    int k = 0;
+    double maxi = 0;
+    double min = 255;
+    for (int i = 0; i < image.height(); i += 3) {
+        for (int j = 0; j < image.width() / 2; j += 3) {
+            outputImages[k++] = (double) bits[i * image.width() + j + offset];
+        }
+    }
+    for (int j = 0; j < k; j++) {
+        if (outputImages[j] > maxi)
+            maxi = outputImages[j];
+        if (outputImages[j] < min)
+            min = outputImages[j];
+    }
+    for (int j = 0; j < k; j++) {
+        outputImages[j] = (1 / (maxi - min)) * outputImages[j];
+    }
+
+    return outputImages;
 }

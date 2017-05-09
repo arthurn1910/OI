@@ -1,4 +1,5 @@
 #include "neuralnetworklayer.h"
+#include <QDebug>
 
 NeuralNetworkLayer::NeuralNetworkLayer(pugi::xml_node layerNode)
 {

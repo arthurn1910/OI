@@ -15,6 +15,7 @@ public:
 
 private:
     void createActivationFunction(int id);
+    void createActivationFunction(int id, double param);
     int numberOfInputs;
     double *weights;
     double biasWeight;
