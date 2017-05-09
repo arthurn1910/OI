@@ -15,10 +15,10 @@ int main(int argc, char *argv[])
     }
 
     Processor * processor = new Processor();
-    if (processor->process(std::atoi(argv[1]), argv[2], argv[3]))
+    if (processor->process(std::atoi(argv[1]), argv[2], argv[3]) == 1)
     {
-        app.quit();
+        return 0;
     }
 
-    return 1;
+    return 0;
 }
