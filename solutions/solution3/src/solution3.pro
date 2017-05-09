@@ -3,7 +3,7 @@ QT += gui
 
 CONFIG += c++11
 
-TARGET = FaceFeatures
+TARGET = solution3
 CONFIG += console
 CONFIG -= app_bundle
 
