@@ -18,16 +18,16 @@ public class Solution {
                 System.out.println(i);
 		if(i<1000 && i>99){
                     pathFile=pathOpen+"BioID_0"+i+".pgm";
-                    pathFileSave=pathSave+"BioID_0"+i+".pts";
+                    pathFileSave=pathSave+"bioid_0"+i+".pts";
                 } else if(i<100 && i >9){
 		pathFile=pathOpen+"BioID_00"+i+".pgm";
-                    pathFileSave=pathSave+"BioID_00"+i+".pts";
+                    pathFileSave=pathSave+"bioid_00"+i+".pts";
 		} else if(i<10){
 		    pathFile=pathOpen+"BioID_000"+i+".pgm";
-                    pathFileSave=pathSave+"BioID_000"+i+".pts";
+                    pathFileSave=pathSave+"bioid_000"+i+".pts";
 		} else {
                     pathFile = pathOpen + "BioID_" + i + ".pgm";
-                    pathFileSave=pathSave+"BioID_"+i+".pts";
+                    pathFileSave=pathSave+"bioid_"+i+".pts";
                 }
                 int[][] data2d = openPicture(pathFile);
 
