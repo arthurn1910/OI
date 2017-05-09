@@ -368,6 +368,11 @@ bool Processor::saveAnnotation(int id, Face face)
         stream << QString::number(face.innerEndOfRightEyebrow.x()) << " " << QString::number(face.innerEndOfRightEyebrow.y()) << endl;
         stream << QString::number(face.innerEndOfLeftEyebrow.x()) << " " << QString::number(face.innerEndOfLeftEyebrow.y()) << endl;
         stream << QString::number(face.outerEndOfLeftEyebrow.x()) << " " << QString::number(face.outerEndOfLeftEyebrow.y()) << endl;
+        stream << QString::number(face.rightTemple.x()) << " " << QString::number(face.rightTemple.y()) << endl;
+        stream << QString::number(face.outerCornerOfRightEye.x()) << " " << QString::number(face.outerCornerOfRightEye.y()) << endl;
+        stream << QString::number(face.innerCornerOfRightEye.x()) << " " << QString::number(face.innerCornerOfRightEye.y()) << endl;
+        stream << QString::number(face.innerCornerOfLeftEye.x()) << " " << QString::number(face.innerCornerOfLeftEye.y()) << endl;
+        stream << QString::number(face.outerCornerOfLeftEye.x()) << " " << QString::number(face.outerCornerOfLeftEye.y()) << endl;
         stream << QString::number(face.leftTemple.x()) << " " << QString::number(face.leftTemple.y()) << endl;
         stream << QString::number(face.noseTip.x()) << " " << QString::number(face.noseTip.y()) << endl;
         stream << QString::number(face.rightNostril.x()) << " " << QString::number(face.rightNostril.y()) << endl;
