@@ -48,7 +48,9 @@ int Processor::database()
 
     for (int file_id = 0; file_id < files.size(); file_id++)
     {
-        QString imagePath = getImagePath(file_id);
+        QString f = files.at(file_id);
+        f = f.replace("BioID_", "").replace(".pgm", "");
+        QString imagePath = getImagePath(f);
         QString path = PARAM_DATABASE + imagePath;
 
         if (not image.load(path))
@@ -270,7 +272,7 @@ int Processor::database()
         image.detach();
         img.detach();
 
-        saveAnnotation(file_id, face);
+        saveAnnotation(f, face);
     }
 
     return 1;
@@ -326,14 +328,12 @@ Bounds Processor::drawFaceRectangle()
     return bounds;
 }
 
-QString Processor::getImagePath(int i)
+QString Processor::getImagePath(QString string)
 {
-    QString id = QString::number(i).rightJustified(4, '0');
-
-    return QString("BioID_%1.pgm").arg(id);
+    return QString("BioID_%1.pgm").arg(string);
 }
 
-bool Processor::saveAnnotation(int id, Face face)
+bool Processor::saveAnnotation(QString id, Face face)
 {
     QString fileName = getImagePath(id);
     fileName = fileName.toLower().replace(".pgm", ".pts");

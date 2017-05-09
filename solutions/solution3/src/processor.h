@@ -38,12 +38,12 @@ public:
     int process(int type, QString database, QString results);
 private:
     int database();
-    QString getImagePath(int i);
+    QString getImagePath(QString i);
     int calcColourOfPixelMask(int startx, int starty, int rx, int ry);
     int getPixelColour(int x, int y);
     bool drawPoint(QImage &img, QPoint coords);
     Bounds drawFaceRectangle();
-    bool saveAnnotation(int id, Face face);
+    bool saveAnnotation(QString id, Face face);
 };
 
 #endif // PROCESSING_H
