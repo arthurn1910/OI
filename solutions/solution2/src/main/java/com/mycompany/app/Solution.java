@@ -14,12 +14,18 @@ public class Solution {
         public static void Run(String pathOpen, String pathSave){
             String pathFile;
             String pathFileSave;
-            for(int i=913; i<=1520; i++) {
+            for(int i=0; i<=1520; i++) {
                 System.out.println(i);
-		if(i<1000){
+		if(i<1000 && i>99){
                     pathFile=pathOpen+"BioID_0"+i+".pgm";
                     pathFileSave=pathSave+"BioID_0"+i+".pts";
-                } else {
+                } else if(i<100 && i >9){
+		pathFile=pathOpen+"BioID_00"+i+".pgm";
+                    pathFileSave=pathSave+"BioID_00"+i+".pts";
+		} else if(i<10){
+		    pathFile=pathOpen+"BioID_000"+i+".pgm";
+                    pathFileSave=pathSave+"BioID_000"+i+".pts";
+		} else {
                     pathFile = pathOpen + "BioID_" + i + ".pgm";
                     pathFileSave=pathSave+"BioID_"+i+".pts";
                 }
@@ -55,11 +61,11 @@ public class Solution {
             eyes[3]=nose[1]-y_i;
 
             for(int r=eyes[1]-5; r<eyes[1]+5;r++)
-                if(r>data.length || r<0){
+                if(r>=data.length || r<0){
                     continue;
                 } else {
                     for (int z = eyes[0] - 10; z < eyes[0]; z++) {
-                        if (z > data[0].length || z < 0) {
+                        if (z >= data.length || z < 0) {
                             continue;
                         } else if (data[r][z] < 100) {
                             eyes[0] = z;
