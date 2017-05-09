@@ -38,7 +38,8 @@ echo "Running ${SOLUTION_NAME} on testing set"
 if [[ JAVA -eq 1 ]]
 then
     # JAVA
-    echo "Java"
+    cd $SOLUTION_PATH
+    mvn exec:java -Dexec.mainClass="com.mycompany.app.App" -Dexec.args="'$BASIC' '$TEST_IMAGE_PATH/' '$RESULT_ANNOTATIONS_PATH/'"
 else
     # C++
     $SOLUTION_PATH/bin/$SOLUTION_NAME $BASIC $TEST_IMAGE_PATH $RESULT_ANNOTATIONS_PATH
