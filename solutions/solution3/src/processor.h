@@ -34,10 +34,10 @@ struct Face {
 class Processor
 {
 public:
-    Processor(int type, QString database, QString results);
-    bool process();
+    Processor();
+    int process(int type, QString database, QString results);
 private:
-    bool database();
+    int database();
     QString getImagePath(int i);
     int calcColourOfPixelMask(int startx, int starty, int rx, int ry);
     int getPixelColour(int x, int y);

@@ -16,7 +16,12 @@ int PARAM_TYPE = 0;
 QString PARAM_DATABASE = "";
 QString PARAM_ANNOTATIONS = "";
 
-Processor::Processor(int type, QString database, QString results)
+Processor::Processor()
+{
+
+}
+
+int Processor::process(int type, QString database, QString results)
 {
     if (not database.endsWith(QDir::separator()))
     {
@@ -31,14 +36,11 @@ Processor::Processor(int type, QString database, QString results)
     PARAM_TYPE = type;
     PARAM_DATABASE = database;
     PARAM_ANNOTATIONS = results;
+
+    return this->database();
 }
 
-bool Processor::process()
-{
-    return database();
-}
-
-bool Processor::database()
+int Processor::database()
 {
     QDir filesDir(PARAM_DATABASE);
     QStringList files = filesDir.entryList();
@@ -57,7 +59,7 @@ bool Processor::database()
             continue;
         }
 
-        qInfo() << "Loaded image: " << path << " (" << image.width() << "x" << image.height() << ")";
+        qDebug() << "Loaded image: " << path << " (" << image.width() << "x" << image.height() << ")";
 
         QImage &img = image;
 
@@ -271,7 +273,7 @@ bool Processor::database()
         saveAnnotation(file_id, face);
     }
 
-    return true;
+    return 1;
 }
 
 int Processor::calcColourOfPixelMask(int startx, int starty, int rx, int ry)
@@ -382,5 +384,5 @@ bool Processor::saveAnnotation(int id, Face face)
     qDebug() << "Annotation saved";
     qDebug() << "";
 
-    return 1;
+    return true;
 }

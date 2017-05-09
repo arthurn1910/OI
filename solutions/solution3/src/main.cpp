@@ -1,11 +1,12 @@
 #include <QCoreApplication>
 #include <QDebug>
 
+#include <iostream>
 #include <processor.h>
 
 int main(int argc, char *argv[])
 {
-    QCoreApplication a(argc, argv);
+    QCoreApplication app(argc, argv);
 
     if (argc != 4)
     {
@@ -13,8 +14,11 @@ int main(int argc, char *argv[])
         return 1;
     }
 
-    Processor* processor = new Processor(std::atoi(argv[1]), argv[2], argv[3]);
-    processor->process();
+    Processor * processor = new Processor();
+    if (processor->process(std::atoi(argv[1]), argv[2], argv[3]))
+    {
+        app.quit();
+    }
 
-    return 0;
+    return 1;
 }
