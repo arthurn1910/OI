@@ -14,10 +14,23 @@
       <version>3.8.1</version>
       <scope>test</scope>
     </dependency>
-    <dependency>
-      <groupId>com.sun.media</groupId>
-      <artifactId>jai_imageio</artifactId>
-      <version>1.1</version>
-    </dependency>
   </dependencies>
+<profiles>
+	    <profile>
+		<id>otherOutputDir</id>
+		<build>
+		    <directory>bin</directory>
+			<plugins>
+        <plugin>
+            <groupId>org.codehaus.mojo</groupId>
+            <artifactId>exec-maven-plugin</artifactId>
+            <version>1.2.1</version>
+            <configuration>
+                <mainClass>com.mycompany.app</mainClass>
+            </configuration>
+        </plugin>
+    </plugins>
+		</build>
+	    </profile>
+	</profiles>
 </project>

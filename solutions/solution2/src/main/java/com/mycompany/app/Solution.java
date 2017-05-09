@@ -15,7 +15,8 @@ public class Solution {
             String pathFile;
             String pathFileSave;
             for(int i=913; i<=1520; i++) {
-                if(i<1000){
+                System.out.println(i);
+		if(i<1000){
                     pathFile=pathOpen+"BioID_0"+i+".pgm";
                     pathFileSave=pathSave+"BioID_0"+i+".pts";
                 } else {
@@ -159,13 +160,12 @@ public class Solution {
             int[] nostril=new int[4];
             int number=0;
 
-            System.out.println("Center colour "+data[center_y][center_x]);
-            System.out.println("^ "+data[206][147]);
-            System.out.println("^ "+data[184][146]);
+
+
 
             for(int y=center_y;y<center_y+15;y++){
                 for(int x=center_x-15;x<center_x+25;x++){
-                    System.out.println(data[x][y]);
+
                     if(data[x][y]<160 && data[x][y+1]<170){
                         if((number > 0 & nostril[0]<x+15) || number==0){
                             nostril[number] = x;
@@ -205,8 +205,6 @@ public class Solution {
             int picHeight = scan.nextInt();
                 scan.nextLine();
 
-                System.out.println(picWidth+ "   "+ picHeight);
-
             fileInputStream.close();
 
             fileInputStream = new FileInputStream(path);
@@ -226,15 +224,12 @@ public class Solution {
             for (int row = 0; row < picHeight; row++) {
                 for (int col = 0; col < picWidth; col++) {
                     data2D[row][col] = dis.readUnsignedByte();
-                    //System.out.print(data2D[row][col] + " ");
                 }
-                //System.out.println("");
             }
-                System.out.println("done");
                 return data2D;
 
             } catch(Exception ex){
-                System.out.println("ERROR read picture");
+                System.out.println("ERROR read picture "+path);
             }
 
             return null;
@@ -288,7 +283,6 @@ public class Solution {
             //BufferedImage image =ImageIO.read(file);
             int center_y=data.length/2;
             int center_x=data[0].length/2;
-            System.out.println("Srodek x: "+center_x+" "+center_y);
             int number=0;
             int[] data4=new int[data[0].length*data.length];
             for (int y = 0; y < data.length; ++y) {
@@ -317,7 +311,6 @@ public class Solution {
                 }
             }
 
-            System.out.println("Max number "+number);
 
             BufferedImage outputImage = new BufferedImage(data[0].length, data.length, BufferedImage.TYPE_BYTE_GRAY);
             WritableRaster raster = outputImage.getRaster();
