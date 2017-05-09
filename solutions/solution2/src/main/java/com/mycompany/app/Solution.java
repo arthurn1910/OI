@@ -83,7 +83,7 @@ public class Solution {
                 }
 
                 for(int z=eyes[0]+10; z<eyes[0]+15;z++) {
-                    if (z > data[0].length || z < 0) {
+                    if (z > data[0].length || z < 0 || eyes[1]<0 || eyes[1]>data[0].length) {
                         continue;
                     } else if (data[eyes[1]][z] < 100) {
                         eyes[2] = z;
