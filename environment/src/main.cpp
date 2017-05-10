@@ -124,26 +124,15 @@ int main(int argc, char *argv[])
     }
 
     // First step of mean square error
-    for (int i = 0; i < NUMBER_OF_FILES; i++) {
-        for (int j = 0; j < ELEMENT_OF_FACES_COUNT; j++) {
-            if (basic && j >= 2)
-                break;
-            squareError[j] += std::pow(distances[i][j] - mean[j], 2);
-        }
-    }
+    
 
-    // Second step of mean square error
-    for (int i = 0; i < ELEMENT_OF_FACES_COUNT; i++) {
-        if (basic && i >= 2)
-            break;
-        squareError[i] /= NUMBER_OF_FILES;
-    }
+    
 
     std::cout << "\nSquare mean error:\n";
     for (int i = 0; i < ELEMENT_OF_FACES_COUNT; i++) {
         if (basic && i >= 2)
             break;
-        std::cout << "\t" << i << ". " << ELEMENT_OF_FACES[i] << ": " << squareError[i] << "\n";
+        std::cout << "\t" << i << ". " << ELEMENT_OF_FACES[i] << ": " << mean[i] << "\n";
     }
 
     std::cout << "\nCorrect location: " << (NUMBER_OF_FILES - namesOfInvalidFiles.size()) / (double) NUMBER_OF_FILES << " %\n\n";
