@@ -2,6 +2,7 @@
 set -e
 
 BASIC=1
+JAVA=0
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 TEST_DATA_PATH="${DIR}/data/test"
 TEST_IMAGE_PATH="${TEST_DATA_PATH}/images"
@@ -18,6 +19,9 @@ do
         --extended)
             BASIC=1
         ;;
+        --java)
+            JAVA=1
+        ;;
         *)
             SOLUTION_PATH=$1
             SOLUTION_NAME=$(basename $SOLUTION_PATH)
@@ -29,15 +33,6 @@ do
     shift # past argument or value
 done
 
-SOLUTION_TYPE=$(printenv OI_SOLUTION)
-
-if [[ "${SOLUTION_TYPE}" == "JAVA" ]]
-then
-    JAVA=1
-else
-    JAVA=0
-fi
-
 # Run solution
 echo "Running ${SOLUTION_NAME} on testing set"
 if [[ JAVA -eq 1 ]]
@@ -47,7 +42,7 @@ then
     mvn exec:java -Dexec.mainClass="com.mycompany.app.App" -Dexec.args="'$BASIC' '$TEST_IMAGE_PATH/' '$RESULT_ANNOTATIONS_PATH/'"
 else
     # C++
-    $SOLUTION_PATH/bin/$SOLUTION_NAME $BASIC $TEST_IMAGE_PATH $RESULT_ANNOTATIONS_PATH
+    $SOLUTION_PATH/deploy/$SOLUTION_NAME $BASIC $TEST_IMAGE_PATH $RESULT_ANNOTATIONS_PATH
 fi
 
 # Test solution

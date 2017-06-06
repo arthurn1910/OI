@@ -139,7 +139,7 @@ int main(int argc, char *argv[])
         std::cout << "\t" << ELEMENT_OF_FACES[i] << ":\t" << (correctElementLocation[i]) * 100.0 / NUMBER_OF_FILES << " %\n";
     }
 
-    std::cout << "Correct files:\n";
+    std::cout << "\n\nCorrect files:\n";
     for (int j = 0; j < namesOfFiles.size(); j++) {
         if (!namesOfInvalidFiles.contains(namesOfFiles.at(j)))
             std::cout << "\t" << namesOfFiles.at(j).toStdString() << "\n";
