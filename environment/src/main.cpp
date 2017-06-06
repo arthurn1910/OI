@@ -8,7 +8,7 @@
 
 const double PRECISION = 0.15;
 const int ELEMENT_OF_FACES_COUNT = 20;
-const std::string ELEMENT_OF_FACES[ELEMENT_OF_FACES_COUNT] {
+const std::string ELEMENT_OF_FACES_ERROR[ELEMENT_OF_FACES_COUNT] {
     "RIGHT_EYE_PUPIL_ERROR",
     "LEFT_EYE_PUPIL_ERROR",
     "RIGHT_MOUTH_ERROR",
@@ -23,12 +23,35 @@ const std::string ELEMENT_OF_FACES[ELEMENT_OF_FACES_COUNT] {
     "LEFT_INNER_EYE_ERROR",
     "LEFT_OUTER_EYE_ERROR",
     "LEFT_TEMPLE_ERROR",
-    "TIP_OF_NOSE",
+    "TIP_OF_NOSE_ERROR",
     "RIGHT_NOSTRIL_ERROR",
     "LEFT_NOSTRIL_ERROR",
     "CENTRE_POINT_OF_UPPER_LIP_ERROR",
     "CENTRE_POINT_OF_LOWER_LIP_ERROR",
     "TIP_OF_CHIN_ERROR" };
+	
+	
+const std::string ELEMENT_OF_FACES_SUCCESS[ELEMENT_OF_FACES_COUNT] {
+    "RIGHT_EYE_PUPIL_SUCCESS",
+    "LEFT_EYE_PUPIL_SUCCESS",
+    "RIGHT_MOUTH_SUCCESS",
+    "LEFT_MOUTH_SUCCESS",
+    "RIGHT_OUTER_EYEBROW_SUCCESS",
+    "RIGHT_INNER_EYEBROW_SUCCESS",
+    "LEFT_INNER_EYEBROW_SUCCESS",
+    "LEFT_OUTER_EYEBROW_SUCCESS",
+    "RIGHT_TEMPLE_SUCCESS",
+    "RIGHT_OUTER_EYE_SUCCESS",
+    "RIGHT_INNER_EYE_SUCCESS",
+    "LEFT_INNER_EYE_SUCCESS",
+    "LEFT_OUTER_EYE_SUCCESS",
+    "LEFT_TEMPLE_SUCCESS",
+    "TIP_OF_NOSE_SUCCESS",
+    "RIGHT_NOSTRIL_SUCCESS",
+    "LEFT_NOSTRIL_SUCCESS",
+    "CENTRE_POINT_OF_UPPER_LIP_SUCCESS",
+    "CENTRE_POINT_OF_LOWER_LIP_SUCCESS",
+    "TIP_OF_CHIN_SUCCESS" };
 
 double **createTwoDimensionalTable(int firstDimension, int secondDimension);
 double ***createTriDimensionalTable(int firstDimension, int secondDimension, int thirdDimension);
@@ -59,7 +82,6 @@ int main(int argc, char *argv[])
     const int NUMBER_OF_FILES = namesOfFiles.size();
 
     double mean[ELEMENT_OF_FACES_COUNT] {0};
-    double squareError[ELEMENT_OF_FACES_COUNT] {0};
     double ***testPoints = createTriDimensionalTable(NUMBER_OF_FILES, ELEMENT_OF_FACES_COUNT, 2);
     double ***resultPoints = createTriDimensionalTable(NUMBER_OF_FILES, ELEMENT_OF_FACES_COUNT, 2);
     double **distances = createTwoDimensionalTable(NUMBER_OF_FILES, ELEMENT_OF_FACES_COUNT);
@@ -128,18 +150,18 @@ int main(int argc, char *argv[])
     for (int i = 0; i < ELEMENT_OF_FACES_COUNT; i++) {
         if (basic && i >= 2)
             break;
-        std::cout << "\t" << i << ". " << ELEMENT_OF_FACES[i] << ":\t" << mean[i] << "\n";
+        std::cout << "\t" << i << ". " << ELEMENT_OF_FACES_ERROR[i] << ":\t" << mean[i] << "\n";
     }
 
-    std::cout << "\nCorrect location of all elements: " << (NUMBER_OF_FILES - namesOfInvalidFiles.size()) * 100.0 / (double) NUMBER_OF_FILES << " %\n\n";
+    std::cout << "\n\nCorrect location of all elements: " << (NUMBER_OF_FILES - namesOfInvalidFiles.size()) * 100.0 / (double) NUMBER_OF_FILES << " %\n\n";
 
     for (int i = 0; i < ELEMENT_OF_FACES_COUNT; i++) {
         if (basic && i >= 2)
             break;
-        std::cout << "\t" << ELEMENT_OF_FACES[i] << ":\t" << (correctElementLocation[i]) * 100.0 / NUMBER_OF_FILES << " %\n";
+        std::cout << "\t" << i << ". " << ELEMENT_OF_FACES_SUCCESS[i] << ":\t" << (correctElementLocation[i]) * 100.0 / NUMBER_OF_FILES << " %\n";
     }
 
-    std::cout << "\n\nCorrect files:\n";
+    std::cout << "Correct files:\n";
     for (int j = 0; j < namesOfFiles.size(); j++) {
         if (!namesOfInvalidFiles.contains(namesOfFiles.at(j)))
             std::cout << "\t" << namesOfFiles.at(j).toStdString() << "\n";
