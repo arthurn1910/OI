@@ -1,4 +1,9 @@
 #!/bin/bash
-sudo apt install qt5-qmake qtbase5-dev
-echo "export QT_SELECT=qt5" >> ~/.bashrc
-source ~/.bashrc
+set -e
+
+DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+cd $DIR
+
+export OI_SOLUTION CPP
+
+cp bin/NeuralNetwork ./deploy/solution3
