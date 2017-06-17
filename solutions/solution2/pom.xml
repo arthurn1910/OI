@@ -15,22 +15,25 @@
       <scope>test</scope>
     </dependency>
   </dependencies>
-<profiles>
-	    <profile>
-		<id>otherOutputDir</id>
 		<build>
 		    <directory>bin</directory>
 			<plugins>
-        <plugin>
-            <groupId>org.codehaus.mojo</groupId>
-            <artifactId>exec-maven-plugin</artifactId>
-            <version>1.2.1</version>
-            <configuration>
-                <mainClass>com.mycompany.app</mainClass>
-            </configuration>
-        </plugin>
-    </plugins>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-compiler-plugin</artifactId>
+                    <configuration>
+                        <source>1.8</source>
+                        <target>1.8</target>
+                    </configuration>
+                </plugin>
+                <!--<plugin>-->
+                    <!--<groupId>org.codehaus.mojo</groupId>-->
+                    <!--<artifactId>exec-maven-plugin</artifactId>-->
+                    <!--<version>1.2.1</version>-->
+                    <!--<configuration>-->
+                        <!--<mainClass>com.mycompany.app</mainClass>-->
+                    <!--</configuration>-->
+                <!--</plugin>-->
+            </plugins>
 		</build>
-	    </profile>
-	</profiles>
 </project>

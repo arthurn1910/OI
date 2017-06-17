@@ -11,40 +11,108 @@ import java.util.Scanner;
 public class Solution {
     public static class SolutionIO{
         private static BufferedImage image;
-        public static void Run(String pathOpen, String pathSave){
+        public static void Run(String pathOpen, String pathSave, String opencvPath, String testPts){
             String pathFile;
             String pathFileSave;
+            String pathFacePosition;
+            String pathTestPoint=null;
+            NeuralNetwork nn = new NeuralNetwork();
+
             for(int i=0; i<=1520; i++) {
-                System.out.println(i);
-		if(i<1000 && i>99){
+                if(i<10){
+                    pathFile=pathOpen+"BioID_000"+i+".pgm";
+                    pathFileSave=pathSave+"/bioid_000"+i+".pts";
+                    pathFacePosition=opencvPath+"/train/bioid_000"+i+".opencv";
+                    pathTestPoint=testPts+"/bioid_000"+i+".pts";
+                } else if(i<100){
+                    pathFile=pathOpen+"BioID_00"+i+".pgm";
+                    pathFileSave=pathSave+"/bioid_00"+i+".pts";
+                    pathFacePosition=opencvPath+"/train/bioid_00"+i+".opencv";
+                    pathTestPoint=testPts+"/bioid_00"+i+".pts";
+                } else if(i<913){
                     pathFile=pathOpen+"BioID_0"+i+".pgm";
-                    pathFileSave=pathSave+"bioid_0"+i+".pts";
-                } else if(i<100 && i >9){
-		pathFile=pathOpen+"BioID_00"+i+".pgm";
-                    pathFileSave=pathSave+"bioid_00"+i+".pts";
-		} else if(i<10){
-		    pathFile=pathOpen+"BioID_000"+i+".pgm";
-                    pathFileSave=pathSave+"bioid_000"+i+".pts";
-		} else {
+                    pathFileSave=pathSave+"/bioid_0"+i+".pts";
+                    pathFacePosition=opencvPath+"/train/bioid_0"+i+".opencv";
+                    pathTestPoint=testPts+"/bioid_0"+i+".pts";
+                }else if(i<1000){
+                    pathFile=pathOpen+"BioID_0"+i+".pgm";
+                    pathFileSave=pathSave+"/bioid_0"+i+".pts";
+                    pathFacePosition=opencvPath+"/test/bioid_0"+i+".opencv";
+                } else {
                     pathFile = pathOpen + "BioID_" + i + ".pgm";
                     pathFileSave=pathSave+"bioid_"+i+".pts";
+                    pathFacePosition=opencvPath+"/train/bioid_"+i+".opencv";
                 }
+                int[] facePosition=readFacePosition(pathFacePosition);
                 int[][] data2d = openPicture(pathFile);
+                //data2d[108][159]=255;
+                if(i<913){
+                    //if(i==10)
+                        System.out.println(i);
+                        double[] testPoint = readTestPoint(pathTestPoint);
+                        nn.learn(data2d, facePosition, testPoint);
 
-                int[] nostril=detectNostril(data2d);
-                int[] nose = detectTipOfNose(nostril);
-                int[] eyes = detectEyes(data2d,nose,nostril);
-                int[] temples=detectTemples(eyes);
-                int[] brows = detectBrows(eyes,temples);
-                int[] mouth = detectMouth(eyes,nose, nostril);
-                int[] chin=detectChin(nose,mouth);
+                }else{
+                    System.out.println("Test "+i);
+                    nn.test(pathFileSave,data2d,facePosition);
+                    //double [] positionnn=nn.test(data2d,facePosition);
+                }
+                //savePicture(data2d);
+
+
+//                int[] nostril=detectNostril(data2d);
+//                int[] nose = detectTipOfNose(nostril);
+//                int[] eyes = detectEyes(data2d,nose,nostril);
+//                int[] temples=detectTemples(eyes);
+//                int[] brows = detectBrows(eyes,temples);
+//                int[] mouth = detectMouth(eyes,nose, nostril);
+//                int[] chin=detectChin(nose,mouth);
 
                     //savePicture(data2d,nostril, nose, eyes, temples, brows, mouth, chin);
-                saveResult(pathFileSave,data2d,nostril, nose, eyes, temples, brows, mouth, chin);
+//                saveResult(pathFileSave,data2d,nostril, nose, eyes, temples, brows, mouth, chin);
 
             }
 
 
+
+        }
+
+        private static double[] readTestPoint(String path){
+            double[] points=new double[40];
+            FileInputStream fileInputStream = null;
+            double x;
+            try {
+                fileInputStream = new FileInputStream(path);
+                Scanner scan = new Scanner(fileInputStream);
+                scan.next();
+                scan.next();
+                scan.next();
+                scan.next();
+                scan.next();
+                for(int i=0;i<40;i++) {
+                    x=scan.nextDouble();
+                    points[i] = x;
+                }
+                return  points;
+            } catch (FileNotFoundException e) {
+                e.printStackTrace();
+            }
+            return null;
+        }
+
+        private static int[] readFacePosition(String pathFacePosition) {
+            int[] facePosition=new int[4];
+            FileInputStream fileInputStream = null;
+            try {
+                fileInputStream = new FileInputStream(pathFacePosition);
+                Scanner scan = new Scanner(fileInputStream);
+                for(int i=0;i<4;i++)
+                    facePosition[i]=scan.nextInt();
+                return  facePosition;
+            } catch (FileNotFoundException e) {
+                e.printStackTrace();
+            }
+           return null;
 
         }
 
@@ -284,35 +352,12 @@ public class Solution {
 
         }
 
-        public static void savePicture(int[][] data, int[] nostril, int[] nose, int[] eyesCorner, int[] temples, int[] brows, int[] mouth,
-                                       int[] chin) {
-            //BufferedImage image =ImageIO.read(file);
-            int center_y=data.length/2;
-            int center_x=data[0].length/2;
+        public static void savePicture(int[][] data) {
             int number=0;
             int[] data4=new int[data[0].length*data.length];
             for (int y = 0; y < data.length; ++y) {
                 for (int x = 0; x < data[0].length; ++x) {
-
-                    if((x==nostril[0] & y==nostril[1]) || (x==nostril[2] & y==nostril[3]))
-                        data4[number]=255;
-                    else if(x==nose[0] & y==nose[1])
-                        data4[number]=255;
-                    else if(x==chin[0] & y==chin[1])
-                        data4[number]=0;
-                    else if((x==eyesCorner[0] & y ==eyesCorner[1])|| (x==eyesCorner[2] & y ==eyesCorner[3])|| (x==eyesCorner[4] & y ==eyesCorner[5])||
-                            (x==eyesCorner[6] & y ==eyesCorner[7]) || (x==eyesCorner[8] & y ==eyesCorner[9])|| (x==eyesCorner[10] & y ==eyesCorner[11]))
-                        data4[number]=255;
-                    else if((x==temples[0] & y ==temples[1])|| (x==temples[2] & y ==temples[3]))
-                        data4[number]=255;
-                    else if((x==brows[0] & y ==brows[1])|| (x==brows[2] & y ==brows[3])|| (x==brows[4] & y ==brows[5])||
-                            (x==brows[6] & y ==brows[7]))
-                        data4[number]=255;
-                    else if((x==mouth[0] & y ==mouth[1])|| (x==mouth[2] & y ==mouth[3])|| (x==mouth[4] & y ==mouth[5])||
-                            (x==mouth[6] & y ==mouth[7]))
-                        data4[number]=255;
-                    else
-                        data4[number]=data[y][x];
+                    data4[number]=data[y][x];
                     number++;
                 }
             }
@@ -328,6 +373,57 @@ public class Solution {
             }
 
 
+        }
+
+        public static ImageScale scaleImage(int [][] image, int[] facePosition){
+            ImageScale imageScale=new ImageScale();
+            int add=0;
+            if(image.length>= (facePosition[1]+facePosition[3]+8)){
+                add=8;
+            }else if( image.length>= (facePosition[1]+facePosition[3]+4)){
+                add=4;
+            }else if( image.length>= (facePosition[1]+facePosition[3]+2)){
+                add=2;
+            }
+
+            int[] image2=new int[(facePosition[3]+add)*facePosition[2]];
+            int k=0;
+            for(int y=facePosition[1];y<(facePosition[3]+add);y++){
+                for(int x=facePosition[0];x<(facePosition[2]);x++){
+                    image2[k]=image[y][x];
+                    k++;
+                }
+            }
+            imageScale.setFacePosition(facePosition);
+            imageScale.setData2d(image);
+            imageScale.setHeight1(facePosition[3]+add);
+            imageScale.setHeight2(30);
+            imageScale.setWidth1(facePosition[2]);
+            imageScale.setWidth2(30);
+            imageScale.setImage(image2);
+
+            resizePixels(imageScale);
+            imageScale.setImageScaled2d();
+
+            return imageScale;
+        }
+
+        public static ImageScale resizePixels(ImageScale imageScale){//int[] pixels,int w1,int h1,int w2,int h2) {
+            int[] temp = new int[imageScale.getHeight2()*imageScale.getWidth2()] ;
+            double x_ratio = imageScale.getWidth1()/(double)imageScale.getScale2() ;
+            double y_ratio = imageScale.getHeight1()/(double)imageScale.getHeight2() ;
+            double px, py ;
+            for (int i=0;i<imageScale.getHeight2();i++) {
+                for (int j=0;j<imageScale.getWidth2();j++) {
+                    px = Math.floor(j*x_ratio) ;
+                    py = Math.floor(i*y_ratio) ;
+                    temp[(i*imageScale.getWidth2())+j] = imageScale.getImage()[(int)((py*imageScale.getWidth1())+px)] ;
+                }
+            }
+            imageScale.setScale1(x_ratio);
+            imageScale.setScale2(y_ratio);
+            imageScale.setImageScaled(temp);
+            return imageScale ;
         }
 
     }
