@@ -46,11 +46,9 @@ public class Serializer {
         try (Scanner inFile = new Scanner(file)) {
             while (inFile.hasNext()) {
                 inFile.nextLine();
-                //System.out.println(hiddenWeights.length);
                 for (int i = 0; i < hiddenWeights.length; i++) {
                     for (int j = 0; j < hiddenWeights[0].length; j++) {
                         hiddenWeights[i][j] = inFile.nextDouble();
-                        //System.out.println(hiddenWeights[i][j]);
                     }
                 }
                 inFile.nextLine();
@@ -60,7 +58,6 @@ public class Serializer {
                 for (int i = 0; i < outputWeights.length; i++) {
                     for (int j = 0; j < outputWeights[0].length; j++) {
                         outputWeights[i][j] = Double.parseDouble(stringValues[j]);
-                        // System.out.println(outputWeights[i][j]);
                     }
                 }
             }

@@ -17,16 +17,8 @@ public class ImageScale {
     private int height2;
 
 
-    public int[] getFacePosition() {
-        return facePosition;
-    }
-
     public void setFacePosition(int[] facePosition) {
         this.facePosition = facePosition;
-    }
-
-    public void setImageScaled2d(int[][] imageScaled2d) {
-        this.imageScaled2d = imageScaled2d;
     }
 
     public double getScale1() {
@@ -45,9 +37,6 @@ public class ImageScale {
         this.scale2 = scale2;
     }
 
-    public int[][] getData2d() {
-        return data2d;
-    }
 
     public void setData2d(int[][] data2d) {
         this.data2d = data2d;
@@ -61,9 +50,6 @@ public class ImageScale {
         this.image = image;
     }
 
-    public int[] getImageScaled() {
-        return imageScaled;
-    }
 
     public void setImageScaled(int[] imageScaled) {
         this.imageScaled = imageScaled;
@@ -99,9 +85,6 @@ public class ImageScale {
 
     public void setHeight2(int height2) {
         this.height2 = height2;
-    }
-
-    public void setScale2() {
     }
 
     public int[][] getImageScaled2d() {

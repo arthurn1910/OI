@@ -45,16 +45,25 @@ public class Solution {
                 }
                 int[] facePosition=readFacePosition(pathFacePosition);
                 int[][] data2d = openPicture(pathFile);
-                //data2d[108][159]=255;
+                ImageScale imageScale;
                 if(i<913){
-                    //if(i==10)
-                        System.out.println(i);
+                    System.out.println(i);
+                    if(facePosition[2]<=5 || facePosition[3]<=5) {
+                        System.out.println("blad");
+                    }else {
                         double[] testPoint = readTestPoint(pathTestPoint);
-                        nn.learn(data2d, facePosition, testPoint);
+                        imageScale=scaleImage(data2d,facePosition);
+                        nn.learn(imageScale, facePosition, testPoint);
+                    }
 
                 }else{
                     System.out.println("Test "+i);
-                    nn.test(pathFileSave,data2d,facePosition);
+                    if(facePosition[2]<=5 || facePosition[3]<=5) {
+                        System.out.println("blad");
+                    }else {                        imageScale=scaleImage(data2d,facePosition);
+                        nn.test(imageScale,pathFileSave,facePosition);
+                    }
+
                     //double [] positionnn=nn.test(data2d,facePosition);
                 }
                 //savePicture(data2d);
@@ -410,7 +419,7 @@ public class Solution {
 
         public static ImageScale resizePixels(ImageScale imageScale){//int[] pixels,int w1,int h1,int w2,int h2) {
             int[] temp = new int[imageScale.getHeight2()*imageScale.getWidth2()] ;
-            double x_ratio = imageScale.getWidth1()/(double)imageScale.getScale2() ;
+            double x_ratio = imageScale.getWidth1()/(double)imageScale.getWidth2() ;
             double y_ratio = imageScale.getHeight1()/(double)imageScale.getHeight2() ;
             double px, py ;
             for (int i=0;i<imageScale.getHeight2();i++) {

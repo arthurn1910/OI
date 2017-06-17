@@ -204,6 +204,7 @@ public class Neuron {
         return neuronsInLayerBelow;
     }
 
+
     public void setNeuronsInLayerBelow(Neuron[] neuronsInLayerBelow) {
         this.neuronsInLayerBelow = neuronsInLayerBelow;
     }
