@@ -43,7 +43,7 @@ int main(int argc, char *argv[])
 
     NeuralNetwork* neuralNetwork=new NeuralNetwork();
     neuralNetwork->setPicture(picture);
-    //neuralNetwork->learn();
+    neuralNetwork->learn();
     neuralNetwork->test();
     return 0;
 }

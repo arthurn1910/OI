@@ -5,6 +5,7 @@
 NeuralNetwork::NeuralNetwork()
 {
     this->network=new Neuron*[3];
+    this->outputValues=new double[40];
     this->network[0]=new Neuron[NETWORK_INPUT_LAYER];
     this->network[1]=new Neuron[NETWORK_HIDDEN_LAYER];
     this->network[2]=new Neuron[NETWORK_OUTPUT_LAYER];
@@ -60,7 +61,7 @@ void NeuralNetwork::learn(){
         }
     }
 
-    saveWeights();
+    //saveWeights();
 
 }
 
@@ -123,21 +124,22 @@ void NeuralNetwork::backPropagation(int epoch) {
 }
 
 void NeuralNetwork::test(){
-    readWeightsHidden();
-    readWeightsOutput();
+    //readWeightsHidden();
+    //readWeightsOutput();
     flag=false;
-//    for(int picture=913;picture<=1520;picture++){
-//        forwardPropagation(picture);
-//        for(int j = 0;j<NETWORK_OUTPUT_LAYER;j++) {
-//            if(j%2==0){
-//                outputValues[j] = network[2][j].getOutput()*pic[picture]->getScaledX()+pic[picture]->getFaceX();
-//            }else{
-//                outputValues[j] = network[2][j].getOutput()*pic[picture]->getScaledX()+pic[picture]->getFaceY();
-//            }
-//        }
-//        saveResult(pic[picture]->getSaveResultPath());
+    for(int picture=913;picture<=1520;picture++){
+        forwardPropagation(picture,flag);
+        for(int j = 0;j<NETWORK_OUTPUT_LAYER;j++) {
+            if(j%2==0){
+                double yuy=network[2][j].getOutput()*pic[picture]->getScaledX()+pic[picture]->getFaceX();
+                outputValues[j] = yuy;
+            }else{
+                outputValues[j] = network[2][j].getOutput()*pic[picture]->getScaledX()+pic[picture]->getFaceY();
+            }
+        }
+        saveResult(pic[picture]->getSaveResultPath());
 
-//    }
+    }
 
 }
 

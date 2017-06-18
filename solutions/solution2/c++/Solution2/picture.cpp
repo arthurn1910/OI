@@ -9,7 +9,7 @@ Picture::Picture(QString idPicture, QString path, QString savePat, QString openC
     imagePath=path+"/BioID_"+idPicture+".pgm";
     savePath=savePat+"/BioID_"+idPicture+".pgm";
     openCVPath=openCv+"/bioid_"+id+".opencv";
-    saveResultPath=openCv+"/a/bioid_"+id+".pts";
+    saveResultPath=openCv+"/bioid_"+id+".pts";
 }
 
 Picture::Picture(QString idPicture, QString path, QString savePath, QString openCv, QString trainPath)
