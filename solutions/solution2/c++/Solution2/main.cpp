@@ -15,7 +15,7 @@ int main(int argc, char *argv[])
     QString savePath ="C:/Users/A638852/Documents/sf/tt"; //argv[3];
     QString trainPath= dataPath+"points_20/";
     QString id;
-    Picture *picture[1521];
+    Picture **picture=new Picture*[1521];
     for(int i=0;i<=1520;i++){
         qDebug()<<QString::number(i);
         if(i<10){
@@ -42,7 +42,8 @@ int main(int argc, char *argv[])
     }
 
     NeuralNetwork* neuralNetwork=new NeuralNetwork();
-    neuralNetwork->setPicture(*picture);
-    neuralNetwork->learn();
+    neuralNetwork->setPicture(picture);
+    //neuralNetwork->learn();
+    neuralNetwork->test();
     return 0;
 }

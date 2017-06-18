@@ -9,6 +9,7 @@ Picture::Picture(QString idPicture, QString path, QString savePat, QString openC
     imagePath=path+"/BioID_"+idPicture+".pgm";
     savePath=savePat+"/BioID_"+idPicture+".pgm";
     openCVPath=openCv+"/bioid_"+id+".opencv";
+    saveResultPath=openCv+"/a/bioid_"+id+".pts";
 }
 
 Picture::Picture(QString idPicture, QString path, QString savePath, QString openCv, QString trainPath)
@@ -46,7 +47,7 @@ void Picture::read()
 
 void Picture::save()
 {
-    qDebug()<<"wszedlem3";
+    qDebug()<<"wszedlem3 save";
     image.save(savePath);
 }
 
@@ -106,7 +107,6 @@ void Picture::scalePicture(int size)
     this->scale=size;
     this->scaledX=this->getFaceWidth()/((double) size);
     this->scaledY=this->getFaceHeight()/((double) size);
-    this->save();
 }
 
 double* Picture::getPositionLearn(){
@@ -132,5 +132,9 @@ double Picture::getScaledY(){
 
 bool Picture::getFlag(){
     return this->flag;
+}
+
+QString Picture::getSaveResultPath(){
+    return this->saveResultPath;
 }
 

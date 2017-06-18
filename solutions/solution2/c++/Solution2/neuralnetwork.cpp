@@ -1,5 +1,6 @@
 #include "neuralnetwork.h"
 #include <qDebug>
+#include <QTextStream>
 
 NeuralNetwork::NeuralNetwork()
 {
@@ -42,37 +43,34 @@ NeuralNetwork::NeuralNetwork()
     }
 }
 
-void NeuralNetwork::setPicture(Picture *picture){
+void NeuralNetwork::setPicture(Picture **picture){
     this->pic=picture;
 }
 
 void NeuralNetwork::learn(){
     flag=true;
-    bool tmp56;
-    for (int i = 0; i < 50; i++) {
-        qDebug()<<QString::number(i);
+    for (int i = 0; i < EPOCHS; i++) {
+        qDebug()<<"EPOCHS"<<QString::number(i);
         for(int picture=0;picture<913;picture++){
-            this->pic[picture].save();
-            if(picture==2)
-                qDebug()<<"BladPicture "<<QString::number(picture);
-            qDebug()<<"Picture "<<QString::number(picture);
-            tmp56=this->pic[picture].getFlag();
-            if(this->pic[picture].getFlag()==true){
-                forwardPropagation(picture);
+            qDebug()<<"PICTURE "<<QString::number(picture);
+            if(this->pic[picture]->getFlag()==true){
+                forwardPropagation(picture,flag);
                 backPropagation(i);
             }
         }
     }
 
+    saveWeights();
+
 }
 
-void NeuralNetwork::forwardPropagation(int picture) {
+void NeuralNetwork::forwardPropagation(int picture,bool flag) {
     double* tmp = new double[NETWORK_INPUT_LAYER];
     double* tmp2 = new double[NETWORK_HIDDEN_LAYER];
     for (int k = 0; k < NETWORK_INPUT_LAYER; k++) {
-        for(int y=0;y<this->pic[picture].getScale();y++){
-            for(int x=0;x<this->pic[picture].getScale();x++){
-                network[0][k].setInput(0, (this->pic[picture].getImage().pixel(x,y))/255);
+        for(int y=0;y<this->pic[picture]->getScale();y++){
+            for(int x=0;x<this->pic[picture]->getScale();x++){
+                network[0][k].setInput(0, (this->pic[picture]->getImage().pixel(x,y))/255);
                 network[0][k].calculateOutput();
             }
         }
@@ -90,9 +88,9 @@ void NeuralNetwork::forwardPropagation(int picture) {
         if(flag) {
             double tmpValue;
             if (k % 2 == 0){
-                tmpValue=(this->pic[picture].getPositionLearn()[k] - this->pic[picture].getFaceX())/(this->pic[picture].getScaledX());
+                tmpValue=(this->pic[picture]->getPositionLearn()[k] - this->pic[picture]->getFaceX())/(this->pic[picture]->getScaledX());
             }else{
-                tmpValue=(this->pic[picture].getPositionLearn()[k] - this->pic[picture].getFaceY())/(this->pic[picture].getScaledY());
+                tmpValue=(this->pic[picture]->getPositionLearn()[k] - this->pic[picture]->getFaceY())/(this->pic[picture]->getScaledY());
             }
             network[2][k].setDesiredValue(tmpValue);
         }
@@ -125,6 +123,125 @@ void NeuralNetwork::backPropagation(int epoch) {
 }
 
 void NeuralNetwork::test(){
+    readWeightsHidden();
+    readWeightsOutput();
     flag=false;
+//    for(int picture=913;picture<=1520;picture++){
+//        forwardPropagation(picture);
+//        for(int j = 0;j<NETWORK_OUTPUT_LAYER;j++) {
+//            if(j%2==0){
+//                outputValues[j] = network[2][j].getOutput()*pic[picture]->getScaledX()+pic[picture]->getFaceX();
+//            }else{
+//                outputValues[j] = network[2][j].getOutput()*pic[picture]->getScaledX()+pic[picture]->getFaceY();
+//            }
+//        }
+//        saveResult(pic[picture]->getSaveResultPath());
 
+//    }
+
+}
+
+void NeuralNetwork::saveResult(QString path){
+    QFile save(path);
+    save.open(QIODevice::WriteOnly);
+    QTextStream stream(&save);
+    stream << "version: 1" << endl;
+    stream << "n_points: 20" << endl;
+    stream << "{" << endl;
+    for (int j = 0; j < 40; j += 2)
+    {
+        stream << outputValues[j] << " " << outputValues[j+1] << endl;
+    }
+
+    stream << "}" << endl;
+
+    save.close();
+}
+
+void NeuralNetwork::saveWeights(){
+    QFile save("C:/Users/A638852/Documents/Solution2/data/weightsHidden.txt");
+    save.open(QIODevice::WriteOnly);
+    QTextStream stream(&save);
+    for(int i=0;i<NETWORK_HIDDEN_LAYER;i++){
+        for(int j=0;j<NETWORK_INPUT_LAYER;j++)
+            stream << this->hiddenWeights[i][j] <<endl;
+    }
+    save.close();
+    QFile saveO("C:/Users/A638852/Documents/Solution2/data/weightsOutput.txt");
+    saveO.open(QIODevice::WriteOnly);
+    QTextStream streamO(&saveO);
+    for(int i=0;i<NETWORK_OUTPUT_LAYER;i++){
+        for(int j=0;j<NETWORK_HIDDEN_LAYER;j++)
+            streamO << this->outputWeights[i][j] <<endl;
+    }
+    saveO.close();
+}
+
+void NeuralNetwork::readWeightsHidden(){
+    QFile readHiddenWeights("C:/Users/A638852/Documents/Solution2/data/weightsHidden.txt");
+    readHiddenWeights.open(QIODevice::ReadOnly);
+    QTextStream streamReadH(&readHiddenWeights);
+    QString tmp="0";
+    double weight;
+    for(int i=0;i<NETWORK_HIDDEN_LAYER;i++){
+        for(int j=0;j<NETWORK_INPUT_LAYER;j++){
+            tmp=streamReadH.readLine();
+            qDebug()<<QString::number(i)+" "+QString::number(j)+" -"+tmp;
+            weight=tmp.toDouble();
+            this->hiddenWeights[i][j] = weight;
+        }
+    }
+    readHiddenWeights.close();
+//    QFile readOutputWeights("C:/Users/A638852/Documents/Solution2/data/weightsOutput.txt");
+//    readOutputWeights.open(QIODevice::ReadOnly);
+//    QTextStream streamReadO(&readOutputWeights);
+//    QString tmp2;
+//    double weight2;
+//    for(int p=0;p<NETWORK_OUTPUT_LAYER;p++){
+//        qDebug()<<"p "<<QString::number(p);
+//        for(int o=0;o<NETWORK_HIDDEN_LAYER;o++){
+//            qDebug()<<"o "<<QString::number(o);
+//            tmp2=streamReadO.readLine();
+//            weight2=tmp2.toDouble();
+//            this->outputWeights[p][o] = weight2;
+//        }
+//    }
+//    readOutputWeights.close();
+//    qDebug()<<"OUTPUT";
+//    for(int i=0;i<NETWORK_OUTPUT_LAYER;i++){
+//        for(int j=0;j<NETWORK_HIDDEN_LAYER;j++)
+//            qDebug()<<QString::number(this->outputWeights[i][j]);
+//    }
+    qDebug()<<"HIDDEN";
+    for(int i=0;i<NETWORK_HIDDEN_LAYER;i++){
+        for(int j=0;j<NETWORK_INPUT_LAYER;j++)
+            qDebug()<<"i "<<QString::number(i)<<" j "<<QString::number(j)<<"   "<<
+                      QString::number(hiddenWeights[i][j]);
+    }
+
+    qDebug()<<"END0";
+}
+
+void NeuralNetwork::readWeightsOutput(){
+    QFile readOutputWeights("C:/Users/A638852/Documents/Solution2/data/weightsOutput.txt");
+    readOutputWeights.open(QIODevice::ReadOnly);
+    QTextStream streamReadO(&readOutputWeights);
+    QString tmp2;
+    double weight2;
+    for(int p=0;p<NETWORK_OUTPUT_LAYER;p++){
+        qDebug()<<"p "<<QString::number(p);
+        for(int o=0;o<NETWORK_HIDDEN_LAYER;o++){
+            qDebug()<<"o "<<QString::number(o);
+            tmp2=streamReadO.readLine();
+            weight2=tmp2.toDouble();
+            this->outputWeights[p][o] = weight2;
+        }
+    }
+//    readOutputWeights.close();
+//    qDebug()<<"OUTPUT";
+//    for(int i=0;i<NETWORK_OUTPUT_LAYER;i++){
+//        for(int j=0;j<NETWORK_HIDDEN_LAYER;j++)
+//            qDebug()<<QString::number(this->outputWeights[i][j]);
+//    }
+    qDebug()<<"END0";
 }

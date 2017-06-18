@@ -15,15 +15,19 @@ class NeuralNetwork
 {
 public:
     NeuralNetwork();
-    void setPicture(Picture* picture );
+    void setPicture(Picture** picture );
     void learn();
     void test();
-    void forwardPropagation(int picture);
+    void forwardPropagation(int picture,bool flag);
     void backPropagation(int epoch);
+    void saveResult(QString path);
+    void saveWeights();
+    void readWeightsHidden();
+    void readWeightsOutput();
 
 private:
     Neuron **network;
-    Picture *pic;
+    Picture **pic;
     double **hiddenWeights;
     double **outputWeights;
     double *outputValues;

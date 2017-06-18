@@ -30,6 +30,7 @@ public:
     double getScaledX();
     double getScaledY();
     bool getFlag();
+    QString getSaveResultPath();
 private:
     QImage image;
     QImage startImage;
@@ -47,6 +48,7 @@ private:
     double scaledX;
     double scaledY;
     bool flag;
+    QString saveResultPath;
 };
 
 #endif // PICTURE_H
