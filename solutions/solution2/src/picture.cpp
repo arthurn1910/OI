@@ -40,7 +40,6 @@ void Picture::readPositionLearn(){
 
 void Picture::read()
 {
-    qDebug()<<imagePath;
     QImage picture(imagePath);
     startImage = picture;
 }
