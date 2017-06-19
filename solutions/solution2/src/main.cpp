@@ -1,8 +1,16 @@
 #include <QCoreApplication>
 #include <picture.h>
-#include <qDebug>
+#include <QDebug>
+#include <QDir>
+#include <QTextStream>
+#include <QString>
+#include <QImage>
+#include <cmath>
+#include <iostream>
+#include <string>
+#include <clocale>
+#include <QCoreApplication>
 #include <neuralnetwork.h>
-
 #define SCALE 30
 
 int main(int argc, char *argv[])
@@ -18,8 +26,8 @@ int main(int argc, char *argv[])
         openPath.append(QDir::separator());
     }
     QString saveResult= argv[3];
-    if (!resultPath.endsWith(QDir::separator())) {
-        resultPath.append(QDir::separator());
+    if (!saveResult.endsWith(QDir::separator())) {
+        saveResult.append(QDir::separator());
     }
     QDir dir(QCoreApplication::applicationDirPath());
     dir.cdUp();

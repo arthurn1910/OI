@@ -1,9 +1,8 @@
-QT += core
-QT += gui
+QT += core gui
 
 CONFIG += c++14
 
-TARGET = Solution2
+TARGET = solution2
 CONFIG += console
 CONFIG -= app_bundle
 

@@ -1,5 +1,5 @@
 #include "neuralnetwork.h"
-#include <qDebug>
+#include <QDebug>
 #include <QTextStream>
 
 NeuralNetwork::NeuralNetwork()
