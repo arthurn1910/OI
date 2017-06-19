@@ -25,6 +25,9 @@ int main(int argc, char *argv[])
     if (!openPath.endsWith(QDir::separator())) {
         openPath.append(QDir::separator());
     }
+    QString openPathTest=openPath;
+    QString openPathLearn=openPath.replace(QString("test/images"), QString("train/images"));
+    qDebug() <<openPathLearn<<" "<<openPathTest;
     QString saveResult= argv[3];
     if (!saveResult.endsWith(QDir::separator())) {
         saveResult.append(QDir::separator());
@@ -33,9 +36,10 @@ int main(int argc, char *argv[])
     dir.cdUp();
     dir.cd("data");
     QString dataPath = dir.absolutePath() + QDir::separator(); 
-    QString openCvPath= dataPath+"/OpenCV_addnotations";
+    QString openCvPath= dataPath+"OpenCV_addnotations";
     QString trainPath= dataPath+"/points_20";
     QString id;
+    qDebug() <<openCvPath;
     Picture **picture=new Picture*[1521];
     for(int i=0;i<=1520;i++){
         qDebug()<<QString::number(i);
@@ -51,10 +55,10 @@ int main(int argc, char *argv[])
             id=QString::number(i);
         }
         if(i<913){
-            picture[i]=new Picture(id,openPath,saveResult,openCvPath+"/train", trainPath);
+            picture[i]=new Picture(id,openPathLearn,saveResult,openCvPath+"/train", trainPath);
             picture[i]->readPositionLearn();
         }else
-            picture[i]=new Picture(id,openPath,saveResult,openCvPath+"/test");
+            picture[i]=new Picture(id,openPathTest,saveResult,openCvPath+"/test");
         picture[i]->read();
         picture[i]->getFacePosition();
         if(picture[i]->getFlag()==true){

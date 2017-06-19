@@ -6,7 +6,7 @@
 Picture::Picture(QString idPicture, QString path, QString saveResult, QString openCv)
 { 
     id=idPicture;
-    imagePath=path+"/BioID_"+idPicture+".pgm";
+    imagePath=path+"BioID_"+idPicture+".pgm";
     openCVPath=openCv+"/bioid_"+id+".opencv";
     saveResultPath=saveResult+"/bioid_"+id+".pts";
 }
@@ -14,7 +14,7 @@ Picture::Picture(QString idPicture, QString path, QString saveResult, QString op
 Picture::Picture(QString idPicture, QString path, QString savePath, QString openCv, QString trainPath)
 {
     id=idPicture;
-    imagePath=path+"/BioID_"+idPicture+".pgm";
+    imagePath=path+"BioID_"+idPicture+".pgm";
     this->savePath=savePath+"/BioID_"+idPicture+".pgm";
     openCVPath=openCv+"/bioid_"+id+".opencv";
     this->trainPath=trainPath+"/bioid_"+idPicture+".pts";
@@ -40,13 +40,13 @@ void Picture::readPositionLearn(){
 
 void Picture::read()
 {
+    qDebug()<<imagePath;
     QImage picture(imagePath);
     startImage = picture;
 }
 
 void Picture::save()
 {
-    qDebug()<<"wszedlem3 save";
     image.save(savePath);
 }
 
