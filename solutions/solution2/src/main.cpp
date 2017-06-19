@@ -8,11 +8,24 @@
 int main(int argc, char *argv[])
 {
     QCoreApplication a(argc, argv);
+    if (argc != 4) {
+        qDebug() << "Invalid number of arguments";
+        return 1;
+    }
 
-    QString openPath = "C:/Users/A638852/Documents/sf/a";//argv[1];
-    QString dataPath = "C:/Users/A638852/Documents/Solution2/data";  //argv[2];
-    QString openCvPath= dataPath+"/OpenCV_addnotations";//
-    QString saveResult="C:/Users/A638852/Documents/Solution2/data/result";//argv[3];
+    QString openPath = argv[2];
+    if (!openPath.endsWith(QDir::separator())) {
+        openPath.append(QDir::separator());
+    }
+    QString saveResult= argv[3];
+    if (!resultPath.endsWith(QDir::separator())) {
+        resultPath.append(QDir::separator());
+    }
+    QDir dir(QCoreApplication::applicationDirPath());
+    dir.cdUp();
+    dir.cd("data");
+    QString dataPath = dir.absolutePath() + QDir::separator(); 
+    QString openCvPath= dataPath+"/OpenCV_addnotations";
     QString trainPath= dataPath+"/points_20";
     QString id;
     Picture **picture=new Picture*[1521];
